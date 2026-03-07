@@ -296,3 +296,15 @@ main {
     animation: fadeOut 0.4s ease-out forwards;
     pointer-events: none; /* Trava o clique para o usuário não clicar duas vezes rápido */
 }
+
+/* Quando o gato normal ganha a fantasia de drácula */
+.sprite-animacao.dracula-equipped {
+    background-image: url('assets/drculacat.png') !important; /* Força a troca da imagem */
+    background-size: 900px 150px !important; /* Ajusta para os 6 frames */
+    animation: walk-dracula 1s steps(6) infinite !important; /* Muda a animação */
+}
+
+@keyframes walk-dracula {
+    from { background-position: 0px 0px; }
+    to { background-position: -900px 0px; } 
+}

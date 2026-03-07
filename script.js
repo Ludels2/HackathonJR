@@ -14,7 +14,6 @@ addBtn.addEventListener('click', async () => {
     addBtn.disabled = true;
 
     try {
-        // MUDANÇA AQUI: Usando o "flash-latest" para forçar o Google a achar o modelo
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
             method: 'POST',
             headers: {
@@ -23,44 +22,39 @@ addBtn.addEventListener('click', async () => {
             body: JSON.stringify({
                 contents: [{
                     parts: [{
-                        text: `O usuário precisa fazer a tarefa: "${inputValue}". Quebre essa tarefa em micro-passos sequenciais, absurdamente fáceis e focados na ação física. Analise a complexidade da tarefa e crie a quantidade ideal de passos necessários (geralmente entre 2 e 6 passos). Responda APENAS em formato JSON válido, sendo um array de strings, neste formato: ["passo 1", "passo 2", "passo N"]`
+                        text: `O usuário precisa fazer a tarefa: "${inputValue}". Quebre essa tarefa em micro-passos sequenciais, fáceis e focados na ação física. Analise a complexidade da tarefa e crie a quantidade ideal de passos necessários (geralmente entre 2 e 6 passos). Responda APENAS em formato JSON válido, sendo um array de strings, neste formato: ["passo 1", "passo 2", "passo N"]`
                     }]
                 }]
             })
         });
 
-        // O NOVO DEDO-DURO: Vai mostrar o erro exato na sua tela se falhar!
         if (!response.ok) {
             const erroGoogle = await response.json();
-            // Pega a mensagem de erro que estava escondida dentro do "Object"
             const motivoExato = erroGoogle.error ? erroGoogle.error.message : "Erro desconhecido";
-            
             alert(`🚨 O Google barrou a gente! O motivo foi: \n\n${motivoExato}`);
             throw new Error(`Erro 404 real: ${motivoExato}`);
         }
 
         const data = await response.json();
         let aiText = data.candidates[0].content.parts[0].text;
-        
+
         // Limpar markdown da IA
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
-        
+
         const steps = JSON.parse(aiText);
-        
-        // PASSA A VASSOURA: Limpa as sidequests antigas antes de colocar as novas!
+
+        // PASSA A VASSOURA
         tasksContainer.innerHTML = '';
-        
+
         // Renderizar passos
         steps.forEach(step => {
             createTaskElement(step);
         });
 
         taskInput.value = '';
-        
+
     } catch (error) {
         console.error('Erro ao gerar tarefas:', error);
-        
-        // Fallback caso a API falhe
         createTaskElement(inputValue);
         taskInput.value = '';
     } finally {
@@ -69,13 +63,13 @@ addBtn.addEventListener('click', async () => {
     }
 });
 
-// Permitir adicionar tarefa apertando Enter
 taskInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         addBtn.click();
     }
 });
 
+// FÁBRICA DE TAREFAS
 function createTaskElement(text) {
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task-item';
@@ -90,19 +84,15 @@ function createTaskElement(text) {
 
     checkbox.addEventListener('change', (e) => {
         if (e.target.checked) {
-            // Ganha a moeda e risca o texto
             totalCoins += 10;
             taskText.classList.add('completed');
             coinCount.textContent = totalCoins;
-            
-            // A MÁGICA: Adiciona a classe que ativa a animação de saída
             taskDiv.classList.add('removing');
-            
-            // Espera 500 milissegundos (meio segundo) e deleta o item do HTML
+
             setTimeout(() => {
                 taskDiv.remove();
-            }, 500); 
-            
+            }, 500);
+
         } else {
             totalCoins -= 10;
             taskText.classList.remove('completed');
@@ -113,4 +103,38 @@ function createTaskElement(text) {
     taskDiv.appendChild(taskText);
     taskDiv.appendChild(checkbox);
     tasksContainer.appendChild(taskDiv);
+}
+
+// ==========================================
+// SISTEMA DA LOJA
+// ==========================================
+const buyDraculaBtn = document.getElementById('buy-dracula-btn');
+// AQUI ESTÁ A MÁGICA: Em vez de procurar um ID novo, pegamos o gato que já existe!
+const anakinPet = document.querySelector('.sprite-animacao'); 
+let ownsDracula = false;
+
+if (buyDraculaBtn && anakinPet) {
+    buyDraculaBtn.addEventListener('click', () => {
+        if (ownsDracula) {
+            alert('Você já tem o Anakin Drácula!');
+            return;
+        }
+
+        if (totalCoins >= 50) {
+            totalCoins -= 50;
+            coinCount.textContent = totalCoins;
+            
+            ownsDracula = true;
+            // Isso vai colar a classe nova no gato principal!
+            anakinPet.classList.add('dracula-equipped'); 
+            
+            buyDraculaBtn.textContent = '🧛 Equipado!';
+            buyDraculaBtn.disabled = true;
+            
+            alert('Miau-haha! O Drácula chegou!');
+        } else {
+            const faltam = 50 - totalCoins;
+            alert(`Faltam ${faltam} moedas!`);
+        }
+    });
 }

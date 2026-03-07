@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quest Manager</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="app-container">
         <header>
@@ -34,7 +36,7 @@
                         <span id="coin-count">0</span>
                     </div>
                 </div>
-                
+
                 <div class="pet-display">
                     <h3>Anakin</h3>
                     <div id="pet-sprite" class="sprite-animacao" title="Pet Anakin"></div>
@@ -42,6 +44,16 @@
 
                 <button class="icon-btn store-btn">🏪</button>
             </section>
+            <div class="shop-section"
+                style="background: white; padding: 16px; border-radius: 16px; margin-top: 20px; text-align: center;">
+                <h3>Lojinha do Anakin</h3>
+                <p>Ajude o gato a conseguir sua fantasia!</p>
+                <br>
+                <button id="buy-dracula-btn"
+                    style="padding: 10px 20px; border-radius: 8px; border: none; background: #8EB4D4; color: white; cursor: pointer; font-weight: bold;">
+                    Comprar Drácula (50 🪙)
+                </button>
+            </div>
         </main>
 
         <nav class="bottom-nav">
@@ -54,4 +66,5 @@
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
