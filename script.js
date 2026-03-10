@@ -1,10 +1,31 @@
-let totalCoins = 0;
+// ==========================================
+// INICIALIZAÇÃO E MEMÓRIA (LocalStorage)
+// ==========================================
+let totalCoins = parseInt(localStorage.getItem('anakinCoins')) || 0;
+let ownsDracula = localStorage.getItem('anakinDracula') === 'true';
 
 const taskInput = document.getElementById('task-input');
 const addBtn = document.getElementById('add-btn');
 const tasksContainer = document.getElementById('tasks-container');
 const coinCount = document.getElementById('coin-count');
+const buyDraculaBtn = document.getElementById('buy-dracula-btn');
+const anakinPet = document.querySelector('.sprite-animacao'); 
 
+// Atualiza a tela logo que abre o app
+coinCount.textContent = totalCoins;
+
+// Se já tiver o Drácula salvo, veste o gato imediatamente!
+if (ownsDracula && anakinPet) {
+    anakinPet.classList.add('dracula-equipped');
+    if (buyDraculaBtn) {
+        buyDraculaBtn.textContent = '🧛 Equipado!';
+        buyDraculaBtn.disabled = true;
+    }
+}
+
+// ==========================================
+// GERAÇÃO DE TAREFAS COM IA
+// ==========================================
 addBtn.addEventListener('click', async () => {
     const inputValue = taskInput.value.trim();
     if (!inputValue) return;
@@ -22,7 +43,7 @@ addBtn.addEventListener('click', async () => {
             body: JSON.stringify({
                 contents: [{
                     parts: [{
-                        text: `O usuário precisa fazer a tarefa: "${inputValue}". Quebre essa tarefa em micro-passos sequenciais, fáceis e focados na ação física. Analise a complexidade da tarefa e crie a quantidade ideal de passos necessários (geralmente entre 2 e 6 passos). Responda APENAS em formato JSON válido, sendo um array de strings, neste formato: ["passo 1", "passo 2", "passo N"]`
+                        text: `O usuário precisa fazer a tarefa: "${inputValue}". Quebre essa tarefa em micro-passos sequenciais, fáceis e focados na ação física. Analise a complexidade da tarefa e crie a quantidade ideal de passos necessários (geralmente entre 2 e 6 passos coerentes que façam sentido). Responda APENAS em formato JSON válido, sendo um array de strings, neste formato: ["passo 1", "passo 2", "passo N"]`
                     }]
                 }]
             })
@@ -69,7 +90,9 @@ taskInput.addEventListener('keypress', (e) => {
     }
 });
 
-// FÁBRICA DE TAREFAS
+// ==========================================
+// FÁBRICA DE TAREFAS (Com salvamento de moedas)
+// ==========================================
 function createTaskElement(text) {
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task-item';
@@ -87,6 +110,10 @@ function createTaskElement(text) {
             totalCoins += 10;
             taskText.classList.add('completed');
             coinCount.textContent = totalCoins;
+            
+            // Salva as moedas no celular do jurado!
+            localStorage.setItem('anakinCoins', totalCoins);
+            
             taskDiv.classList.add('removing');
 
             setTimeout(() => {
@@ -97,6 +124,7 @@ function createTaskElement(text) {
             totalCoins -= 10;
             taskText.classList.remove('completed');
             coinCount.textContent = totalCoins;
+            localStorage.setItem('anakinCoins', totalCoins);
         }
     });
 
@@ -106,13 +134,8 @@ function createTaskElement(text) {
 }
 
 // ==========================================
-// SISTEMA DA LOJA
+// SISTEMA DA LOJA (PREÇO DE PITCH: 20 MOEDAS)
 // ==========================================
-const buyDraculaBtn = document.getElementById('buy-dracula-btn');
-// AQUI ESTÁ A MÁGICA: Em vez de procurar um ID novo, pegamos o gato que já existe!
-const anakinPet = document.querySelector('.sprite-animacao'); 
-let ownsDracula = false;
-
 if (buyDraculaBtn && anakinPet) {
     buyDraculaBtn.addEventListener('click', () => {
         if (ownsDracula) {
@@ -120,11 +143,15 @@ if (buyDraculaBtn && anakinPet) {
             return;
         }
 
-        if (totalCoins >= 50) {
-            totalCoins -= 50;
+        if (totalCoins >= 20) {
+            totalCoins -= 20;
             coinCount.textContent = totalCoins;
             
+            // Salva a compra e o novo saldo!
+            localStorage.setItem('anakinCoins', totalCoins);
+            localStorage.setItem('anakinDracula', 'true');
             ownsDracula = true;
+            
             // Isso vai colar a classe nova no gato principal!
             anakinPet.classList.add('dracula-equipped'); 
             
@@ -133,7 +160,7 @@ if (buyDraculaBtn && anakinPet) {
             
             alert('Miau-haha! O Drácula chegou!');
         } else {
-            const faltam = 50 - totalCoins;
+            const faltam = 20 - totalCoins;
             alert(`Faltam ${faltam} moedas!`);
         }
     });
