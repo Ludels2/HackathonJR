@@ -69,11 +69,48 @@ addBtn.addEventListener('click', async () => {
 
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
         const steps = JSON.parse(aiText);
-        
-        console.log("5. JSON parseado com sucesso:", steps);
 
+        // PASSA A VASSOURA (Limpa as tarefas anteriores)
         tasksContainer.innerHTML = '';
 
+        // 🌟 NOVO: CABEÇALHO DA MAIN QUEST
+        const mainQuestDiv = document.createElement('div');
+        // Usando CSS inline para você não precisar mexer no seu arquivo .css agora!
+        mainQuestDiv.style.backgroundColor = '#f0f4f8';
+        mainQuestDiv.style.borderLeft = '4px solid #4285f4';
+        mainQuestDiv.style.padding = '12px 15px';
+        mainQuestDiv.style.marginBottom = '20px';
+        mainQuestDiv.style.borderRadius = '8px';
+        mainQuestDiv.style.display = 'flex';
+        mainQuestDiv.style.justifyContent = 'space-between';
+        mainQuestDiv.style.alignItems = 'center';
+        mainQuestDiv.style.fontWeight = 'bold';
+        mainQuestDiv.style.color = '#333';
+
+        const questText = document.createElement('span');
+        questText.textContent = `🎯 Main Quest: ${inputValue}`;
+
+        const calendarLink = document.createElement('a');
+        const textoCodificado = encodeURIComponent(inputValue);
+        // O link agora leva a Main Quest!
+        calendarLink.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${textoCodificado}&details=Estou+cumprindo+as+sidequests+dessa+missão+no+app+Anakin!`;
+        calendarLink.target = '_blank';
+        calendarLink.textContent = '📅 Agendar';
+        calendarLink.style.textDecoration = 'none';
+        calendarLink.style.backgroundColor = '#4285f4';
+        calendarLink.style.color = 'white';
+        calendarLink.style.padding = '6px 12px';
+        calendarLink.style.borderRadius = '6px';
+        calendarLink.style.fontSize = '0.85em';
+        calendarLink.style.cursor = 'pointer';
+
+        mainQuestDiv.appendChild(questText);
+        mainQuestDiv.appendChild(calendarLink);
+        
+        // Adiciona o cabeçalho no container
+        tasksContainer.appendChild(mainQuestDiv);
+
+        // Renderizar os micro-passos (Sidequests) logo abaixo!
         steps.forEach(step => {
             createTaskElement(step.texto, step.moedas);
         });
