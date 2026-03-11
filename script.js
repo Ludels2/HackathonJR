@@ -31,8 +31,25 @@ addBtn.addEventListener('click', async () => {
     const inputValue = taskInput.value.trim();
     if (!inputValue) return;
 
+    // 🛡️ O SEGURANÇA DE BALADA (Filtro Anti-Zoeira super rápido)
+    const palavrasProibidas = ['oi', 'ola', 'olá', 'bom dia', 'boa tarde', 'boa noite', 'teste', 'asdf', '123'];
+    
+    // Se a pessoa digitar menos de 3 letras (ex: "a", "oi") ou uma palavra da lista:
+    if (inputValue.length <= 2 || palavrasProibidas.includes(inputValue.toLowerCase())) {
+        tasksContainer.innerHTML = ''; // Limpa a tela
+        
+        // Renderiza a bronca do gato na hora, sem chamar a internet!
+        createTaskElement("Miau! Isso não é uma tarefa! Digite algo real para eu quebrar.", 0);
+        
+        taskInput.value = '';
+        return; // O "return" mata a função aqui. A IA nem é chamada!
+    }
+
+    // Se passou do segurança, continua o fluxo normal (bloqueia o botão, chama a API...)
     addBtn.textContent = '⌛';
     addBtn.disabled = true;
+    
+    // ... (resto do seu código do try/catch continua igualzinho aqui pra baixo) ...
 
     try {
         console.log("1. Enviando para a IA: ", inputValue);
